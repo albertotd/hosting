@@ -5,7 +5,7 @@
   var HEIGHT_MIN = "40px";
 
   var createContact = function(tel) {
-    return isNaN(tel) ? "" : "<div><div id='" + tel + "'>📞 <a href=\"javascript:CTI.clickToCall('+" + tel + "')\" title='Click to call'>+" + tel + "</a></div></div>";
+    return isNaN(tel) ? "" : "<div><div id='" + tel + "'>👤 Contact: 📞 <a href=\"javascript:CTI.clickToCall('+" + tel + "')\" title='Click to call'>+" + tel + "</a></div></div>";
   };
 
   var addContact = function(contacts, tel) {
@@ -24,7 +24,7 @@
   }
 
   var contactCalling = function(tel) {
-    animate("wiggle", addContact(document.getElementById("contacts"), tel), 60000);
+    animate("wiggle", addContact(document.getElementById("contacts"), tel), 15000);
   }
 
   var getTextWidth = function(text) {
@@ -39,21 +39,26 @@
     return "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='14px' width='" + getTextWidth(text) + "px'><text x='1' y='10' fill='lightgray' font-style='italic' font-size='10' font-family='sans-serif'>" + text + "</text></svg>\")";
   };
 
+  var toggle = function(ctiContainer, minimize) {
+    ctiContainer.minimized = minimize === undefined ? !ctiContainer.minimized : minimize;
+    ctiContainer.style.display = "block";
+    ctiContainer.style.height  = ctiContainer.minimized ? HEIGHT_MIN : HEIGHT_MAX;
+  };
+
   var ctiEventHandler = function(event, data) {
     var ctiContainer = document.getElementById("cticontainer");
     switch (event) {
-      case "show":
+      case "prompt":
         if (ctiContainer.style.display === "block") {
           animate("wiggle", CTI_CONTAINER, 950);
         }
-        ctiContainer.style.display = "block";
-        ctiContainer.style.height  = HEIGHT_MAX;
+        toggle(ctiContainer, false);
         break;
-      case "minimize":
-        ctiContainer.style.height  = data ? HEIGHT_MIN : HEIGHT_MAX;
+      case "toggle":
+        toggle(ctiContainer);
         break;        
       case "contact":
-        ctiContainer.style.height  = HEIGHT_MAX;
+        toggle(ctiContainer, false);
         contactCalling(data.number || data.externalId);
         break;
       case "data":

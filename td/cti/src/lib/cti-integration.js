@@ -8,15 +8,15 @@
     return function(event) {
       console.log("CTI integration - event received:", event && event.data && event.data.action, event);
       if (event.source === iframe.contentWindow && event && event.data) {
-        readyState = event.data.action === 'ready' || (event.data.action === 'show' ? false : readyState);
-        eventHandler(event.data.action, event.data.data);
+        readyState = event.data.action === 'ready' || (event.data.action === 'prompt' ? false : readyState);
+        eventHandler && eventHandler(event.data.action, event.data.data);
       }
     };
   };
 
   var clickToCallHandler = function(ctiIframe, eventHandler) {
     return function(to, from, contactId) {
-      !readyState ? eventHandler('show') :
+      !readyState ? eventHandler && eventHandler('prompt') :
         ctiIframe.contentWindow.postMessage({action: 'clickToCall', number: to, externalId: contactId, outbound_caller_id: from}, '*');
     };
   }
@@ -33,8 +33,8 @@
       if (container && !document.getElementById(CTI_ID)) {
         window.addEventListener('message', messageHandler(eventHandler, iframe));      
         container.appendChild(iframe);
+        this.clickToCall = clickToCallHandler(iframe, eventHandler);        
       }
-      this.clickToCall = clickToCallHandler(iframe, eventHandler);
     },
     clickToCall: function(to, from, contactId) {}
   };

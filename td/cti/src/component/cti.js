@@ -38,7 +38,7 @@
             elements.cti.style.display = input.innerHTML ? "block" : "none";
             elements.callbar.style.display = "none";
             elements.minimize.style.display = "none";
-            parent.postMessage({action: "show"}, "*");
+            parent.postMessage({action: "prompt"}, "*");
             break;
           case "hide":
             elements.agent.style.display = "none";
@@ -67,8 +67,7 @@
   };
 
   var minimizeHandler = function() {
-    this.status = !this.status;
-    parent.postMessage({action: "minimize", data: this.status}, "*");
+    parent.postMessage({action: "toggle"}, "*");
   }
 
   var init = function(config) {
