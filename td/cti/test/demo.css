@@ -1,0 +1,8 @@
+body{margin:0;overflow:hidden}
+a{color:black}
+*{font-weight:bolder}
+#contacts{margin:15px}
+#contacts>div>div {display: inline-block}
+#cticontainer{position:fixed;right:15px;bottom:0px;border:1px solid;overflow:hidden;height:480px;display:none}
+.wiggle {animation:1s wiggleAni ease infinite}
+@keyframes wiggleAni {0% {transform: rotate(-3deg)} 20% {transform: rotate(20deg)} 40% {transform: rotate(-15deg)} 60% {transform: rotate(5deg)} 90% {transform:rotate(-1deg)} 100% {transform:rotate(0)}}
