@@ -41,7 +41,6 @@
 
   var toggle = function(ctiContainer, minimize) {
     ctiContainer.minimized = minimize === undefined ? !ctiContainer.minimized : minimize;
-    ctiContainer.style.display = "block";
     ctiContainer.style.height  = ctiContainer.minimized ? HEIGHT_MIN : HEIGHT_MAX;
   };
 
@@ -49,9 +48,7 @@
     var ctiContainer = document.getElementById("cticontainer");
     switch (event) {
       case "prompt":
-        if (ctiContainer.style.display === "block") {
-          animate("wiggle", CTI_CONTAINER, 950);
-        }
+        animate("wiggle", CTI_CONTAINER, 950);
         toggle(ctiContainer, false);
         break;
       case "toggle":

@@ -13,9 +13,20 @@
       </div>
       <iframe id="callbar" allow="microphone *" frameborder="0" scrolling="no"></iframe>
       <iframe id="cti" frameborder="0" scrolling="no"></iframe>
+      <div id="load" class="app">
+        <div class="logo"></div>
+        <div>Loading ...</div>
+        <div class="wave icon">👋</div>
+      </div>        
+      <div id="error" class="app">
+        <div class="logo"></div>        
+        <div>Something is not working</div>
+        <div class="icon">⚠️</div>
+        <div><a href="javascript:location.reload()" class="retry">Retry</a></div>
+      </div>
       <div id="agent" class="app">
         <div class="logo"></div>
-        <div class="title"><p class="title">Log in</p></div>
+        <div>Log in</div>
         <div class="bottom">
           <div class="container">
             <div class="label"><span>Agent ID</span></div>

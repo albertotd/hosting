@@ -20,7 +20,15 @@
   };
 
   var messageHandler = function(env, elements) {
+    elements.load.style.display = "block";
+    var errorTimeout = setTimeout(function() {
+      elements.error.style.display = "block";
+      elements.load.style.display = "none";
+    }, 10000);
     return function(event) {
+      clearTimeout(errorTimeout);
+      elements.error.style.display = "none";
+      elements.load.style.display = "none";      
       console.log("CTI - event received:", event && event.data && event.data.action, event);
       if (env.cti.startsWith(event.origin)) {
         switch (event.data.action) {
@@ -71,31 +79,33 @@
   }
 
   var init = function(config) {
-    document.featurePolicy && 
-    document.featurePolicy.allowedFeatures().indexOf("microphone") === -1 && 
-    console.warn("CTI - no access to microphone from parent window");
-
-    var urlSearchParams = new URLSearchParams(window.location.search);
-    var params = Object.fromEntries(urlSearchParams.entries());
-    var env = config[params.env] || config.prd;
     var elements = {
       cti: document.getElementById("cti"),
       minimize: document.getElementById("minimize"),
       callbar: document.getElementById("callbar"),
       agent: document.getElementById("agent"),
-      input: document.getElementById("input")
+      input: document.getElementById("input"),
+      load: document.getElementById("load"),
+      error: document.getElementById("error")
     };
+
+    var urlSearchParams = new URLSearchParams(window.location.search);
+    var params = Object.fromEntries(urlSearchParams.entries());
+    var env = config[params.env] || config.prd;
     
     window.addEventListener("message", messageHandler(env, elements));
     document.getElementById("button").onclick = buttonHandler(elements);
     if (params.aid) {
       elements.input.innerHTML = params.aid;
-    } else {
-      elements.agent.style.display = "block";
     }
+
     elements.cti.srcdoc = redirect(env.cti);
     elements.callbar.srcdoc = redirect(env.callbar);
     elements.minimize.onclick = minimizeHandler;
+
+    document.featurePolicy && 
+    document.featurePolicy.allowedFeatures().indexOf("microphone") === -1 && 
+    console.warn("CTI - no access to microphone from parent window");
   };
 
   init(config);
