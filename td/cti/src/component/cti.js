@@ -2,15 +2,15 @@
 
   var config = {
     "stg": {
-      "cti": "https://cti-client.talkdeskstg.com?integration=genericcti&use_generic=true",
+      "cti": "https://cti-client.talkdeskstg.com?integration=pega_sync_test&use_generic=true",
       "callbar": "https://callbar.meza.talkdeskstg.com/"
     },
     "qa": {
-      "cti": "https://cti-client.talkdeskqa.com?integration=genericcti&use_generic=true",
+      "cti": "https://cti-client.talkdeskqa.com?integration=pega_sync_test&use_generic=true",
       "callbar": "https://callbar.meza.talkdeskqa.com/"
     },
     "prd": {
-      "cti": "https://cti-client.talkdeskapp.com?integration=genericcti&use_generic=true",
+      "cti": "https://cti-client.talkdeskapp.com?integration=pega_sync_test&use_generic=true",
       "callbar": "https://callbar.talkdeskapp.com/"
     }
   };
