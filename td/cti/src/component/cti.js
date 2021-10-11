@@ -2,15 +2,15 @@
 
   var config = {
     "stg": {
-      "cti": "https://cti-client.talkdeskstg.com?integration=pega_sync_test&use_generic=true",
+      "cti": "https://cti-client.talkdeskstg.com?use_generic=true&integration=",
       "callbar": "https://callbar.meza.talkdeskstg.com/"
     },
     "qa": {
-      "cti": "https://cti-client.talkdeskqa.com?integration=pega_sync_test&use_generic=true",
+      "cti": "https://cti-client.talkdeskqa.com?use_generic=true&integration=",
       "callbar": "https://callbar.meza.talkdeskqa.com/"
     },
     "prd": {
-      "cti": "https://cti-client.talkdeskapp.com?integration=pega_sync_test&use_generic=true",
+      "cti": "https://cti-client.talkdeskapp.com?use_generic=true&integration=",
       "callbar": "https://callbar.talkdeskapp.com/"
     }
   };
@@ -99,7 +99,7 @@
       elements.input.innerHTML = params.aid;
     }
 
-    elements.cti.srcdoc = redirect(env.cti);
+    elements.cti.srcdoc = redirect(env.cti + params.int);
     elements.callbar.srcdoc = redirect(env.callbar);
     elements.minimize.onclick = minimizeHandler;
 

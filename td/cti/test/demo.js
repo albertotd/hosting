@@ -3,28 +3,37 @@
   var CTI_CONTAINER = "#cticontainer";
   var HEIGHT_MAX = "480px";
   var HEIGHT_MIN = "40px";
+  var ANIMATION = "wiggle";
 
   var createContact = function(tel) {
     return isNaN(tel) ? "" : "<div><div id='" + tel + "'>👤 Contact: 📞 <a href=\"javascript:CTI.clickToCall('+" + tel + "')\" title='Click to call'>+" + tel + "</a></div></div>";
   };
 
-  var addContact = function(contacts, tel) {
+  var addContact = function(tel) {
     tel = +(tel.trim());
     var contact = document.getElementById(tel);
     if (!contact) {
-      contacts.innerHTML += createContact(tel);
+      document.getElementById("contacts").innerHTML += createContact(tel);
     }
     return contact || document.getElementById(tel);
   }
 
   var animate = function(animation, elem, timeout) {
-    elem = typeof elem === "string" ? document.querySelector(elem) : elem;
-    elem.classList.toggle(animation);
-    setTimeout(function() {elem.classList.toggle(animation);}, timeout);
+    elem && elem.classList.add(animation);
+    elem && timeout && setTimeout(function() {elem.classList.remove(animation)}, timeout);
+  }
+
+  var inanimate = function(animation, elem) {
+    elem = document.getElementById(elem);
+    elem && elem.classList.remove(animation);
   }
 
   var contactCalling = function(tel) {
-    animate("wiggle", addContact(document.getElementById("contacts"), tel), 15000);
+    animate(ANIMATION, addContact(tel));
+  }
+
+  var contactCallEnd = function(tel) {
+    inanimate(ANIMATION, tel);
   }
 
   var getTextWidth = function(text) {
@@ -45,10 +54,10 @@
   };
 
   var ctiEventHandler = function(event, data) {
-    var ctiContainer = document.getElementById("cticontainer");
+    var ctiContainer = document.querySelector(CTI_CONTAINER);
     switch (event) {
       case "prompt":
-        animate("wiggle", CTI_CONTAINER, 950);
+        animate(ANIMATION, ctiContainer, 950);
         toggle(ctiContainer, false);
         break;
       case "toggle":
@@ -59,6 +68,7 @@
         contactCalling(data.number || data.externalId);
         break;
       case "data":
+        data.action === 'endcall' && contactCallEnd(data.number);
         break;  
     }
   };
@@ -73,12 +83,11 @@
     }
 
     var tels = params.tels && params.tels.split(",") || [];
-    var contacts = document.getElementById("contacts"); 
     for(var i=0; i<tels.length; i++) {
-      addContact(contacts, tels[i]);
+      addContact(tels[i]);
     }
 
-    CTI.start(ctiEventHandler, CTI_CONTAINER, params.env, params.aid);
+    CTI.start(ctiEventHandler, CTI_CONTAINER, params.env, params.aid, params.int);
   };
 
   init();
