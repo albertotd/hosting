@@ -33,7 +33,7 @@
   }
 
   var contactCallEnd = function(tel) {
-    inanimate(ANIMATION, tel);
+    inanimate(ANIMATION, +(tel.trim()));
   }
 
   var getTextWidth = function(text) {

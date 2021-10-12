@@ -29,7 +29,7 @@
       clearTimeout(errorTimeout);
       elements.error.style.display = "none";
       elements.load.style.display = "none";      
-      console.log("CTI - event received:", event && event.data && event.data.action, event);
+      console.log("cti.js - event received:", event && event.data && event.data.action, event);
       if (env.cti.startsWith(event.origin)) {
         switch (event.data.action) {
           case "getExternalId":
@@ -105,7 +105,9 @@
 
     document.featurePolicy && 
     document.featurePolicy.allowedFeatures().indexOf("microphone") === -1 && 
-    console.warn("CTI - no access to microphone from parent window");
+    console.warn("cti.js - no access to microphone from parent window");
+
+    !params.int && console.warn("cti.js - no integration name provided: contact and data events will not be available");
   };
 
   init(config);
