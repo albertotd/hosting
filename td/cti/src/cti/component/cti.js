@@ -24,6 +24,7 @@
     var errorTimeout = setTimeout(function() {
       elements.error.style.display = "block";
       elements.load.style.display = "none";
+      parent.postMessage({action: "prompt"}, "*");
     }, 10000);
     return function(event) {
       clearTimeout(errorTimeout);
