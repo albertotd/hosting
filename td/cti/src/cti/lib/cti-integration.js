@@ -47,7 +47,7 @@
         var iframe = document.createElement('iframe');
         iframe.src = CTI_URL + "?aid=" + (agentId || "") + "&env=" + (env || "") + "&int=" + (integration || "");
         iframe.id = CTI_ID;
-        // iframe.allow = "microphone";
+        iframe.allow = "microphone";
         Object.assign(iframe.style, {border: "0px", overflow: "hidden", height: "100%", width: "100%"});
         container.appendChild(iframe);        
 
