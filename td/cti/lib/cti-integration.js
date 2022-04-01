@@ -50,10 +50,10 @@
       if (container && eventHandler !== false) {
         var iframe = document.createElement('iframe');
         iframe.src = CTI_URL + 
-                     "?aid=" + (encodeURIComponent(agentId) || "") + 
-                     "&env=" + (encodeURIComponent(env) || "") + 
-                     "&int=" + (encodeURIComponent(integration) || "") + 
-                     "&acc=" + (encodeURIComponent(account) || "");
+                     "?aid=" + encodeURIComponent(agentId || "") + 
+                     "&env=" + encodeURIComponent(env || "") + 
+                     "&int=" + encodeURIComponent(integration || "") + 
+                     "&acc=" + encodeURIComponent(account || "");
         iframe.id = CTI_ID;
         iframe.allow = "microphone";
         Object.assign(iframe.style, {border: "0px", overflow: "hidden", height: "100%", width: "100%"});
