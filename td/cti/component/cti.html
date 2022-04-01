@@ -7,13 +7,6 @@
   </head>
   <body>
     <div id="root">
-      <div id="minimize-callbar">
-        <div class="minimize-button minimize-button1"></div>
-        <div class="minimize-button minimize-button2"></div>
-      </div>
-      <iframe id="callbar" allow="microphone *" frameborder="0" scrolling="no"></iframe>
-      <div id="minimize-conversations"></div>      
-      <iframe id="conversations" allow="microphone *" frameborder="0" scrolling="no"></iframe>
       <iframe id="cti" frameborder="0" scrolling="no"></iframe>
       <div id="load" class="app">
         <div class="logo"></div>
@@ -28,7 +21,7 @@
       </div>
       <div id="agent" class="app">
         <div class="logo"></div>
-        <div>CTI Log in</div>
+        <div>Log in</div>
         <div class="bottom">
           <div class="container">
             <div class="label"><span>Agent External ID</span></div>
@@ -37,6 +30,8 @@
           <button class="button" id="button">Set</button>
         </div>
       </div>
+      <div class="minimize"><div id="minimize-button"></div></div>
+      <iframe id="phone" allow="microphone *" frameborder="0" scrolling="no"></iframe>
     </div>
     <script src="cti.js" charset="utf-8"></script>
   </body>

@@ -1,10 +1,10 @@
 pega.cti.embeddedApi.Talkdesk = function () {
-  console.log("pega.cti.embeddedApi.Talkdesk constructor", arguments);
+  console.log("[pega.cti.embeddedApi.Talkdesk] constructor", arguments);
 }
 
 pega.cti.embeddedApi.Talkdesk.prototype = {
   load: function (link, success, failure) {
-    console.log("pega.cti.embeddedApi.Talkdesk load", arguments);
+    console.log("[pega.cti.embeddedApi.Talkdesk] load", arguments);
 
     var getConfigProperty = function(property) {
       property = link.CustomProperties && link.CustomProperties.find(function(p) { return p.pyPropertyName === property });
@@ -26,11 +26,11 @@ pega.cti.embeddedApi.Talkdesk.prototype = {
   },
 
   unload: function () {
-    console.warn("pega.cti.embeddedApi.Talkdesk unload not implemented", arguments);	
+    console.warn("[pega.cti.embeddedApi.Talkdesk] unload not implemented", arguments);	
   },    
 
   makeCall:function (destination, options, success, failure)  {
-    console.log("pega.cti.embeddedApi.Talkdesk makeCall", arguments);
+    console.log("[pega.cti.embeddedApi.Talkdesk] makeCall", arguments);
     if (CTI) {
       CTI.clickToCall(destination);
       success();
@@ -40,11 +40,11 @@ pega.cti.embeddedApi.Talkdesk.prototype = {
   },
 
   answerCall: function (callId, options,success,failure) {
-    console.warn("pega.cti.embeddedApi.Talkdesk answerCall not implemented", arguments);
+    console.warn("[pega.cti.embeddedApi.Talkdesk] answerCall not implemented", arguments);
   },
   
   setTransferContext: function() {
-    console.warn("pega.cti.embeddedApi.Talkdesk setTransferContext not implemented", arguments);	
+    console.warn("[pega.cti.embeddedApi.Talkdesk] setTransferContext not implemented", arguments);	
   },
 
   expandCCP: function() {

@@ -1,8 +1,6 @@
 !(function(global) {
 
   var CTI_CONTAINER = "#cticontainer";
-  var HEIGHT_MAX = "480px";
-  var HEIGHT_MIN = "40px";
   var ANIMATION = "wiggle";
 
   var createContact = function(tel) {
@@ -50,7 +48,7 @@
 
   var toggle = function(ctiContainer, minimize) {
     ctiContainer.minimized = minimize === undefined ? !ctiContainer.minimized : minimize;
-    ctiContainer.style.height  = ctiContainer.minimized ? HEIGHT_MIN : HEIGHT_MAX;
+    ctiContainer.style.height  = ctiContainer.minimized ? CTI.minHeight : CTI.maxHeight;
   };
 
   var ctiEventHandler = function(event, data) {

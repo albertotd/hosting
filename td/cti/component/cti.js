@@ -22,6 +22,16 @@
     return "<!DOCTYPE html><html><head><meta http-equiv='refresh' content='0; url=" + url + "'></head><body></body></html>";
   };
 
+  var sendEventToCti = function(cti, eventData) {
+    console.log("[cti.js] >>> event sent to CTI:", eventData && eventData.action, eventData);        
+    cti.contentWindow.postMessage(eventData, '*');
+  }
+
+  var sendEventToUI = function(eventData) {
+    console.log("[cti.js] >>> event sent to UI:", eventData && eventData.action, eventData);        
+    parent.postMessage(eventData, '*');
+  }  
+
   var messageHandler = function(env, elements) {
     elements.load.style.display = "block";
     var errorTimeout = setTimeout(function() {
@@ -33,36 +43,34 @@
       clearTimeout(errorTimeout);
       elements.error.style.display = "none";
       elements.load.style.display = "none";      
-      console.log("cti.js - event received:", event && event.data && event.data.action, event);
       if (env.cti.startsWith(event.origin)) {
+        console.log("[cti.js] <<< event received from CTI:", event && event.data && event.data.action, event);        
         switch (event.data.action) {
           case "getExternalId":
-            elements.cti.contentWindow.postMessage({action: 'getExternalId_response', response: elements.input.innerHTML}, '*');
+            sendEventToCti(elements.cti, {action: 'getExternalId_response', response: elements.input.innerHTML});
             break;
           case "openContact":
-            parent.postMessage({action: "contact", data: event.data.data}, "*");
+            sendEventToUI({action: "contact", data: event.data.data});
             break;            
           case "sendData":
-            parent.postMessage({action: "data", data: event.data.data}, "*");
+            sendEventToUI({action: "data", data: event.data.data});
             break;
           case "show":
             elements.agent.style.display = input.innerHTML ? "none" : "block";
             elements.cti.style.display = input.innerHTML ? "block" : "none";
-            elements.phone.style.display = "none";
             elements.minimize.style.display = "none";
-            parent.postMessage({action: "prompt"}, "*");
+            sendEventToUI({action: "prompt"});
             break;
           case "hide":
             elements.agent.style.display = "none";
             elements.cti.style.display = "none";
-            elements.phone.style.display = "block";
             elements.minimize.style.display = "block";
-            parent.postMessage({action: "ready"}, "*");
+            sendEventToUI({action: "ready"});
             break;
         }
       } else if (event.source === parent.window && event.data.action === "clickToCall") {
-        cti.contentWindow.postMessage(event.data, '*');
-        parent.postMessage({action: "contact", data: event.data}, "*");
+        sendEventToCti(elements.cti, event.data);
+        sendEventToUI({action: "contact", data: event.data});
       }
     };
   };
@@ -70,8 +78,7 @@
   var buttonHandler = function(elements) {
     return function() {
       if (elements.input.innerHTML) {
-        elements.agent.style.display = "none";  
-        elements.phone.style.display = "none";
+        elements.agent.style.display = "none";
         elements.minimize.style.display = "none";
         elements.cti.style.display = "block";
       }
@@ -89,9 +96,8 @@
 
     var elements = {
       cti: document.getElementById("cti"),
-      minimize: document.getElementById(params.acc ? "minimize-conversations" : "minimize-callbar"),
-      phone: document.getElementById(params.acc ? "conversations" : "callbar"),
-      conversations: document.getElementById("conversations"),
+      minimize: document.getElementById("minimize-button"),
+      phone: document.getElementById("phone"),
       agent: document.getElementById("agent"),
       input: document.getElementById("input"),
       load: document.getElementById("load"),
@@ -105,14 +111,16 @@
     }
 
     elements.cti.srcdoc = redirect(env.cti + params.int);
+    elements.phone.className = params.acc ? "conversations" : "callbar";
+    elements.minimize.className = params.acc ? "minimize-button-conversations" : "minimize-button-callbar"
     elements.phone.srcdoc = redirect(params.acc ? env.conversations.replace("{account}", params.acc) : env.callbar);
     elements.minimize.onclick = minimizeHandler;
     
     document.featurePolicy && 
     document.featurePolicy.allowedFeatures().indexOf("microphone") === -1 && 
-    console.warn("cti.js - no access to microphone from parent window");
+    console.warn("[cti.js] no access to microphone from parent window");
 
-    !params.int && console.warn("cti.js - no integration name provided: contact and data events will not be available");
+    !params.int && console.warn("[cti.js] no integration name provided: contact and data events will not be available");
   };
 
   init(config);
