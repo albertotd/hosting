@@ -87,7 +87,7 @@
       addContact(tels[i]);
     }
 
-    CTI.start(ctiEventHandler, CTI_CONTAINER, params.env, params.aid, params.int);
+    CTI.start(ctiEventHandler, CTI_CONTAINER, params.env, params.aid, params.int, params.acc);
   };
 
   init();

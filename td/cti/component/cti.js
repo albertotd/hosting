@@ -3,15 +3,18 @@
   var config = {
     "stg": {
       "cti": "https://cti-client.talkdeskstg.com?use_generic=true&integration=",
-      "callbar": "https://callbar.meza.talkdeskstg.com/"
+      "callbar": "https://callbar.meza.talkdeskstg.com/",
+      "conversations": "https://{account}.gettalkdesk.com/atlas/apps/conversation"
     },
     "qa": {
       "cti": "https://cti-client.talkdeskqa.com?use_generic=true&integration=",
-      "callbar": "https://callbar.meza.talkdeskqa.com/"
+      "callbar": "https://callbar.meza.talkdeskqa.com/",
+      "conversations": "https://{account}.trytalkdesk.com/atlas/apps/conversation"
     },
     "prd": {
       "cti": "https://cti-client.talkdeskapp.com?use_generic=true&integration=",
-      "callbar": "https://callbar.talkdeskapp.com/"
+      "callbar": "https://callbar.talkdeskapp.com/",
+      "conversations": "https://{account}.mytalkdesk.com/atlas/apps/conversation"
     }
   };
 
@@ -45,14 +48,14 @@
           case "show":
             elements.agent.style.display = input.innerHTML ? "none" : "block";
             elements.cti.style.display = input.innerHTML ? "block" : "none";
-            elements.callbar.style.display = "none";
+            elements.phone.style.display = "none";
             elements.minimize.style.display = "none";
             parent.postMessage({action: "prompt"}, "*");
             break;
           case "hide":
             elements.agent.style.display = "none";
             elements.cti.style.display = "none";
-            elements.callbar.style.display = "block";
+            elements.phone.style.display = "block";
             elements.minimize.style.display = "block";
             parent.postMessage({action: "ready"}, "*");
             break;
@@ -68,7 +71,7 @@
     return function() {
       if (elements.input.innerHTML) {
         elements.agent.style.display = "none";  
-        elements.callbar.style.display = "none";
+        elements.phone.style.display = "none";
         elements.minimize.style.display = "none";
         elements.cti.style.display = "block";
       }
@@ -80,19 +83,20 @@
   }
 
   var init = function(config) {
+    var urlSearchParams = new URLSearchParams(window.location.search);
+    var params = Object.fromEntries(urlSearchParams.entries());
+    var env = config[params.env] || config.prd;
+
     var elements = {
       cti: document.getElementById("cti"),
-      minimize: document.getElementById("minimize"),
-      callbar: document.getElementById("callbar"),
+      minimize: document.getElementById(params.acc ? "minimize-conversations" : "minimize-callbar"),
+      phone: document.getElementById(params.acc ? "conversations" : "callbar"),
+      conversations: document.getElementById("conversations"),
       agent: document.getElementById("agent"),
       input: document.getElementById("input"),
       load: document.getElementById("load"),
       error: document.getElementById("error")
     };
-
-    var urlSearchParams = new URLSearchParams(window.location.search);
-    var params = Object.fromEntries(urlSearchParams.entries());
-    var env = config[params.env] || config.prd;
     
     window.addEventListener("message", messageHandler(env, elements));
     document.getElementById("button").onclick = buttonHandler(elements);
@@ -101,9 +105,9 @@
     }
 
     elements.cti.srcdoc = redirect(env.cti + params.int);
-    elements.callbar.srcdoc = redirect(env.callbar);
+    elements.phone.srcdoc = redirect(params.acc ? env.conversations.replace("{account}", params.acc) : env.callbar);
     elements.minimize.onclick = minimizeHandler;
-
+    
     document.featurePolicy && 
     document.featurePolicy.allowedFeatures().indexOf("microphone") === -1 && 
     console.warn("cti.js - no access to microphone from parent window");
