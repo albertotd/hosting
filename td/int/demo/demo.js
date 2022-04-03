@@ -9,7 +9,7 @@
 
   var addContact = function(tel) {
     if (!tel) return {};
-    tel = +(tel.trim());
+    tel = +(tel.replace(/\D/g,''));
     var contact = document.getElementById(tel);
     if (!contact) {
       document.getElementById("contacts").innerHTML += createContact(tel);
