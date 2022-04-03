@@ -1,25 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8">    
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>Talkdesk</title>
     <link rel="stylesheet" type="text/css" href="cti.css">    
   </head>
   <body>
     <div id="root">
-      <iframe id="cti" frameborder="0" scrolling="no"></iframe>
-      <div id="load" class="app">
-        <div class="logo"></div>
-        <div>Loading ...</div>
-        <div class="wave icon">👋</div>
-      </div>        
-      <div id="error" class="app">
-        <div class="logo"></div>        
-        <div>Something is not working</div>
-        <div class="icon">⚠️</div>
-        <div><a href="javascript:location.reload()" class="retry">Retry</a></div>
-      </div>
       <div id="agent" class="app">
         <div class="logo"></div>
         <div>Log in</div>
@@ -31,6 +19,13 @@
           <button class="button" id="button">Set</button>
         </div>
       </div>
+      <div id="error" class="app">
+        <div class="logo"></div>        
+        <div>Something is not working</div>
+        <div class="icon">⚠️</div>
+        <div><a href="javascript:location.reload()" class="retry">Retry</a></div>
+      </div>      
+      <iframe id="cti" frameborder="0" scrolling="no"></iframe>      
       <div class="minimize"><div id="minimize-button"></div></div>
       <iframe id="phone" allow="microphone *" frameborder="0" scrolling="no"></iframe>
     </div>

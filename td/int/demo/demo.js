@@ -1,13 +1,14 @@
 !(function(global) {
 
   var CTI_CONTAINER = "#cticontainer";
-  var ANIMATION = "wiggle";
+  var ANIMATION = "bounce";
 
   var createContact = function(tel) {
-    return isNaN(tel) ? "" : "<div><div id='" + tel + "'>👤 Contact: 📞 <a href=\"javascript:CTI.clickToCall('+" + tel + "')\" title='Click to call'>+" + tel + "</a></div></div>";
+    return isNaN(tel) ? "" : "<div><div>👤 <a href=\"javascript:CTI.clickToCall('+" + tel + "')\" title='Click to call'>+" + tel + "</a><span id='" + tel + "' class='call-status'><span></div></div>";
   };
 
   var addContact = function(tel) {
+    if (!tel) return {};
     tel = +(tel.trim());
     var contact = document.getElementById(tel);
     if (!contact) {
@@ -21,17 +22,25 @@
     elem && timeout && setTimeout(function() {elem.classList.remove(animation)}, timeout);
   }
 
-  var inanimate = function(animation, elem) {
-    elem = document.getElementById(elem);
-    elem && elem.classList.remove(animation);
+  var callingContact = function(tel) {
+    clearCalls();
+    addContact(tel).innerHTML = ": being called...";
   }
 
   var contactCalling = function(tel) {
-    animate(ANIMATION, addContact(tel));
+    clearCalls();
+    addContact(tel).innerHTML = ": is calling...";
   }
 
   var contactCallEnd = function(tel) {
-    inanimate(ANIMATION, +(tel.trim()));
+    addContact(tel).innerHTML = ": call ended.";
+  }
+
+  var clearCalls = function() {
+    var callStatuses = document.getElementsByClassName('call-status');
+    for (var i=0; i < callStatuses.length; i++) {
+        callStatuses[i].innerHTML = "";
+    }
   }
 
   var getTextWidth = function(text) {
@@ -48,22 +57,25 @@
 
   var toggle = function(ctiContainer, minimize) {
     ctiContainer.minimized = minimize === undefined ? !ctiContainer.minimized : minimize;
-    ctiContainer.style.height  = ctiContainer.minimized ? CTI.minHeight : CTI.maxHeight;
+    ctiContainer.style.height = ctiContainer.minimized ? CTI.minHeight : CTI.maxHeight;
   };
+
+  var isMinimized = function(ctiContainer) { return ctiContainer.minimized; }
 
   var ctiEventHandler = function(event, data) {
     var ctiContainer = document.querySelector(CTI_CONTAINER);
     switch (event) {
       case "prompt":
-        animate(ANIMATION, ctiContainer, 950);
+        animate(ANIMATION, ctiContainer, 3000);
         toggle(ctiContainer, false);
         break;
       case "toggle":
         toggle(ctiContainer);
         break;        
       case "contact":
-        toggle(ctiContainer, false);
-        contactCalling(data.number || data.externalId);
+        isMinimized(ctiContainer) && animate(ANIMATION, ctiContainer, 3000);
+        contactCalling(data.externalId);
+        callingContact(data.number);
         break;
       case "data":
         data.action === 'endcall' && contactCallEnd(data.number);

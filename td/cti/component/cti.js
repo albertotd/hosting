@@ -1,5 +1,7 @@
 !(function(global) {
 
+  var ERROR_TIMEOUT = 10000;
+
   var config = {
     "stg": {
       "cti": "https://cti-client.talkdeskstg.com?use_generic=true&integration=",
@@ -30,23 +32,29 @@
   var sendEventToUI = function(eventData) {
     console.log("[cti.js] >>> event sent to UI:", eventData && eventData.action, eventData);        
     parent.postMessage(eventData, '*');
-  }  
+  }
+  
+  var setError = function(elements) {
+    return setTimeout(function() {
+      elements.error.style.display = "block";
+      sendEventToUI({action: "prompt"});
+    }, ERROR_TIMEOUT);
+  };
+
+  var clearError = function(elements, errorTimeout) {
+    clearTimeout(errorTimeout);
+    elements.error.style.display = "none";
+  }
 
   var messageHandler = function(env, elements) {
-    elements.load.style.display = "block";
-    var errorTimeout = setTimeout(function() {
-      elements.error.style.display = "block";
-      elements.load.style.display = "none";
-      parent.postMessage({action: "prompt"}, "*");
-    }, 10000);
+    var errorTimeout = setError(elements);
     return function(event) {
-      clearTimeout(errorTimeout);
-      elements.error.style.display = "none";
-      elements.load.style.display = "none";      
       if (env.cti.startsWith(event.origin)) {
+        clearError(elements, errorTimeout);
         console.log("[cti.js] <<< event received from CTI:", event && event.data && event.data.action, event);        
         switch (event.data.action) {
           case "getExternalId":
+            elements.phone.srcdoc = redirect(elements.phoneSrc);
             sendEventToCti(elements.cti, {action: 'getExternalId_response', response: elements.input.innerHTML});
             break;
           case "openContact":
@@ -58,13 +66,11 @@
           case "show":
             elements.agent.style.display = input.innerHTML ? "none" : "block";
             elements.cti.style.display = input.innerHTML ? "block" : "none";
-            elements.minimize.style.display = "none";
             sendEventToUI({action: "prompt"});
             break;
           case "hide":
             elements.agent.style.display = "none";
             elements.cti.style.display = "none";
-            elements.minimize.style.display = "block";
             sendEventToUI({action: "ready"});
             break;
         }
@@ -75,18 +81,26 @@
     };
   };
 
-  var buttonHandler = function(elements) {
+  var setAgentButtonHandler = function(elements) {
     return function() {
       if (elements.input.innerHTML) {
         elements.agent.style.display = "none";
-        elements.minimize.style.display = "none";
         elements.cti.style.display = "block";
       }
     }
   };
 
+  var setAgentEnterKey = function(handler) {
+    return function(e) {
+      if (e.key === 'Enter' || e.keyCode === 13) {
+        handler();
+        return false;
+      }    
+    }
+  };
+
   var minimizeHandler = function() {
-    parent.postMessage({action: "toggle"}, "*");
+    sendEventToUI({action: "toggle"});
   }
 
   var init = function(config) {
@@ -100,21 +114,23 @@
       phone: document.getElementById("phone"),
       agent: document.getElementById("agent"),
       input: document.getElementById("input"),
-      load: document.getElementById("load"),
-      error: document.getElementById("error")
+      error: document.getElementById("error"),
+      phoneSrc: params.acc ? env.conversations.replace("{account}", params.acc) : env.callbar
     };
     
-    window.addEventListener("message", messageHandler(env, elements));
-    document.getElementById("button").onclick = buttonHandler(elements);
+    var setAgentButton = document.getElementById("button");
+    setAgentButton.onclick = setAgentButtonHandler(elements);
+    elements.input.onkeydown = setAgentEnterKey(setAgentButton.onclick);
     if (params.aid) {
       elements.input.innerHTML = params.aid;
     }
 
-    elements.cti.srcdoc = redirect(env.cti + params.int);
     elements.phone.className = params.acc ? "conversations" : "callbar";
     elements.minimize.className = params.acc ? "minimize-button-conversations" : "minimize-button-callbar"
-    elements.phone.srcdoc = redirect(params.acc ? env.conversations.replace("{account}", params.acc) : env.callbar);
     elements.minimize.onclick = minimizeHandler;
+
+    window.addEventListener("message", messageHandler(env, elements));    
+    elements.cti.srcdoc = redirect(env.cti + params.int);
     
     document.featurePolicy && 
     document.featurePolicy.allowedFeatures().indexOf("microphone") === -1 && 
