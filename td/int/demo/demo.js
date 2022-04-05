@@ -9,6 +9,7 @@
 
   var addContact = function(tel) {
     if (!tel) return {};
+    if (tel.split(" ").length === 2) tel = tel.split(" ")[0];
     tel = +(tel.replace(/\D/g,''));
     var contact = document.getElementById(tel);
     if (!contact) {
