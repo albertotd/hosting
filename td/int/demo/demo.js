@@ -75,8 +75,8 @@
         break;        
       case "contact":
         isMinimized(ctiContainer) && animate(ANIMATION, ctiContainer, 3000);
-        contactCalling(data.externalId);
-        callingContact(data.number);
+        if (data.externalId) contactCalling(data.externalId);
+        else callingContact(data.number);
         break;
       case "data":
         data.action === 'endcall' && contactCallEnd(data.number);
