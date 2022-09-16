@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>Talkdesk</title>
+    <script>
+        window.addEventListener('message', function(e) {
+            console.log("Received message", e.type, e);
+        });
+        function call() {
+            if(window.parent !== window) {
+                window.parent.postMessage({payload: {
+                    Type: "CALL",
+                    EventType: "INBOUND",
+                    ACTION: "ACCEPT",
+                    ANI: "+358403573592"
+                }}, "*");
+            }
+        };
+    </script>
+</head>
+<body>
+    <button type="button" onclick="call()">Accept call</button>
+</body>
+</html>
